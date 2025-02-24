@@ -52,10 +52,15 @@ void setupWindow() {
 class Counter with ChangeNotifier {
   int value = 0;
   String msg = "You're a child!";
-  //Colors color = Colors.lightBlue;
+  MaterialColor myColor = Colors.lightBlue;
 
   void increment() {
     value += 1;
+    setMilestone();
+    notifyListeners();
+  }
+  void decrement() {
+    value -= 1;
     setMilestone();
     notifyListeners();
   }
@@ -63,14 +68,19 @@ class Counter with ChangeNotifier {
   void setMilestone() {
     if (value >= 51) {
       msg = "Golden years!";
+      myColor = Colors.grey;
     } else if (value >= 31) {
       msg = "You're an adult now!";
+      myColor = Colors.orange;
     } else if (value >= 20) {
       msg = "You're a young adult!";
+      myColor = Colors.yellow;
     } else if (value >= 13) {
       msg = "Teenager time!";
+      myColor = Colors.lightGreen;
     } else {
       msg = "You're a child!";
+      myColor = Colors.lightBlue;
     }
     notifyListeners();
   }
@@ -112,10 +122,24 @@ class MyHomePage extends StatelessWidget {
             // rebuilds if the model is updated.
             Consumer<Counter>(
               builder: (context, counter, child) => 
-              Text(
-                'I am ${counter.value} years old\n ${counter.msg}',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+                Container(
+                  color: counter.myColor,
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                      'I am ${counter.value} years old\n ${counter.msg}',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      ElevatedButton(
+                        onPressed: counter.increment, 
+                        child: Text('Increment Age')
+                      ),
+                      ElevatedButton(
+                        onPressed: counter.decrement, 
+                        child: Text('Decrement Age')
+                      ),
+                  ]),
+                ),
             ),
             /*ElevatedButton(
               child: 
@@ -124,30 +148,6 @@ class MyHomePage extends StatelessWidget {
             ),*/
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        //increments count
-        onPressed: () {
-          // You can access your providers anywhere you have access
-          // to the context. One way is to use Provider.of<Counter>(context).
-         // The provider package also defines extension methods on the context
-          // itself. You can call context.watch<Counter>() in a build method
-          // of any widget to access the current state of Counter, and to ask
-          // Flutter to rebuild your widget anytime Counter changes.
-          //
-          // You can't use context.watch() outside build methods, because that
-          // often leads to subtle bugs. Instead, you should use
-          // context.read<Counter>(), which gets the current state
-          // but doesn't ask Flutter for future rebuilds.
-          //
-          // Since we're in a callback that will be called whenever the user
-          // taps the FloatingActionButton, we are not in the build method here.
-          // We should use context.read().
-          var counter = context.read<Counter>();
-          counter.increment();
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
