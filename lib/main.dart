@@ -53,6 +53,7 @@ class Counter with ChangeNotifier {
   int value = 0;
   String msg = "You're a child!";
   MaterialColor myColor = Colors.lightBlue;
+  Animation<Color> progressColor = AlwaysStoppedAnimation<Color>(Colors.green);
 
   void increment() {
     value += 1;
@@ -81,6 +82,18 @@ class Counter with ChangeNotifier {
     } else {
       msg = "You're a child!";
       myColor = Colors.lightBlue;
+    }
+    setColor();
+    notifyListeners();
+  }
+
+  void setColor() {
+    if (value >= 66) {
+      progressColor = AlwaysStoppedAnimation<Color>(Colors.red);
+    } else if (value >= 33) {
+      progressColor = AlwaysStoppedAnimation<Color>(Colors.yellow);
+    } else {
+      progressColor = AlwaysStoppedAnimation<Color>(Colors.green);
     }
     notifyListeners();
   }
@@ -130,6 +143,23 @@ class MyHomePage extends StatelessWidget {
                       'I am ${counter.value} years old\n ${counter.msg}',
                       style: Theme.of(context).textTheme.headlineMedium,
                       ),
+                      Slider(
+                        min: 0,
+                        max: 99,
+                        value: counter.value.toDouble(),
+                        onChanged: (double value) {
+                          counter.value = value.round();
+                          counter.increment();
+                          counter.decrement();
+                        },
+                        //red=0, green=exceeds 50
+                        activeColor: Colors.blue,
+                        inactiveColor: Colors.red,
+                      ),
+                      LinearProgressIndicator(
+                        valueColor: counter.progressColor,
+                        value: counter.value.toDouble(),
+                      ),
                       ElevatedButton(
                         onPressed: counter.increment, 
                         child: Text('Increment Age')
@@ -141,11 +171,6 @@ class MyHomePage extends StatelessWidget {
                   ]),
                 ),
             ),
-            /*ElevatedButton(
-              child: 
-                Text('Increase Age'),
-              onPressed: () => counterInstance.increment(),
-            ),*/
           ],
         ),
       ),
