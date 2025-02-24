@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 //provider like helper class
 //statemanagement handled thru the package -> efficient/seamless UI updates
+//use provider class -> handle SM
 
 void main() {
   setupWindow();
@@ -50,9 +51,27 @@ void setupWindow() {
 /// _not_ depend on Provider.
 class Counter with ChangeNotifier {
   int value = 0;
+  String msg = "You're a child!";
+  //Colors color = Colors.lightBlue;
 
   void increment() {
     value += 1;
+    setMilestone();
+    notifyListeners();
+  }
+
+  void setMilestone() {
+    if (value >= 51) {
+      msg = "Golden years!";
+    } else if (value >= 31) {
+      msg = "You're an adult now!";
+    } else if (value >= 20) {
+      msg = "You're a young adult!";
+    } else if (value >= 13) {
+      msg = "Teenager time!";
+    } else {
+      msg = "You're a child!";
+    }
     notifyListeners();
   }
 }
@@ -78,6 +97,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //var counterInstance = Counter();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Demo Home Page'),
@@ -86,17 +106,22 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('You have pushed the button this many times:'),
             // Consumer looks for an ancestor Provider widget
             // and retrieves its model (Counter, in this case).
             // Then it uses that model to build widgets, and will trigger
             // rebuilds if the model is updated.
             Consumer<Counter>(
-              builder: (context, counter, child) => Text(
-                '${counter.value}',
+              builder: (context, counter, child) => 
+              Text(
+                'I am ${counter.value} years old\n ${counter.msg}',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
+            /*ElevatedButton(
+              child: 
+                Text('Increase Age'),
+              onPressed: () => counterInstance.increment(),
+            ),*/
           ],
         ),
       ),
